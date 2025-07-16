@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>크로메이트 이미지 분류기</title>
+</head>
+<body>
+    <h1>이미지 불량 판별</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <button type="submit">업로드 & 예측</button>
+    </form>
+
+    {% if label %}
+        <h3>🧠 예측 결과: <span style="color:blue;">{{ label }}</span></h3>
+        <img src="{{ image_path }}" width="300">
+    {% endif %}
+</body>
+</html>
