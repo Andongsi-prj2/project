@@ -36,8 +36,8 @@ test_transform = transforms.Compose([
 ])
 
 # ✅ 4. 데이터셋 로딩
-train_dataset = datasets.ImageFolder('modelling/data/train', transform=train_transform)
-test_dataset = datasets.ImageFolder('modelling/data/test', transform=test_transform)
+train_dataset = datasets.ImageFolder('data/train', transform=train_transform)
+test_dataset = datasets.ImageFolder('data/test', transform=test_transform)
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader  = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
@@ -59,7 +59,7 @@ criterion = nn.CrossEntropyLoss(weight=class_weights.to(device))
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 # ✅ 8. 학습 루프
-print("🚀 학습 시작...")
+print("\U0001F680 학습 시작...")
 for epoch in range(epochs):
     model.train()
     running_loss = 0.0
@@ -81,11 +81,16 @@ for epoch in range(epochs):
         correct += (predicted == labels).sum().item()
 
     acc = correct / total * 100
-    print(f"📍 Epoch [{epoch+1}/{epochs}] | Loss: {running_loss:.4f} | Accuracy: {acc:.2f}%")
+    print(f"\U0001F4CD Epoch [{epoch+1}/{epochs}] | Loss: {running_loss:.4f} | Accuracy: {acc:.2f}%")
 
 # ✅ 9. 저장
+# 1) state_dict 저장 (가중치만)
 torch.save(model.state_dict(), "resnet18_ok_ng.pt")
-print("✅ 모델 저장 완료: resnet18_ok_ng.pt")
+print("✅ 모델 가중치만 저장 완료: resnet18_ok_ng.pt")
+
+# 2) 전체 모델 저장 (구조 + 가중치)
+torch.save(model, "resnet18_full.pt")
+print("✅ 전체 모델 저장 완료: resnet18_full.pt")
 
 # ✅ 10. 테스트 평가
 model.eval()
@@ -100,7 +105,7 @@ with torch.no_grad():
         all_preds.extend(predicted.cpu().numpy())
         all_labels.extend(labels.numpy())
 
-print("\n🧪 Confusion Matrix:")
+print("\n\U0001F9EA Confusion Matrix:")
 print(confusion_matrix(all_labels, all_preds))
-print("\n📋 Classification Report:")
+print("\n\U0001F4CB Classification Report:")
 print(classification_report(all_labels, all_preds, target_names=test_dataset.classes))

@@ -24,7 +24,7 @@ model = model.to(device)
 model.eval()
 
 # ✅ 5. 예측할 이미지 경로
-img_path = "modelling/data/test/정상/KEMP_IMG_DATA_12.png"  # ← 여기에 테스트할 이미지 경로 입력
+img_path = "data/test/정상/KEMP_IMG_DATA_12.png"  # ← 여기에 테스트할 이미지 경로 입력
 
 # ✅ 6. 이미지 불러오기 & 예측
 img = Image.open(img_path).convert('RGB')
