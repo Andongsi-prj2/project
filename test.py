@@ -5,12 +5,13 @@ import mysql.connector
 
 # MySQL 접속 정보 입력
 conn = mysql.connector.connect(
-    host="opyter.iptime.org",         # 보통 로컬이면 localhost
-    port=13306,                # MySQL 기본 포트
-    user="data_if_master",     # MySQL 사용자 이름
-    password="data_if_master123!", # MySQL 비밀번호
-    database="mes"  # DBeaver에서 만든 데이터베이스 이름
+    host="andongsi-prj2-mysql.cnea6o8q8dkx.ap-northeast-2.rds.amazonaws.com",  # 새로운 호스트
+    port=3306,                                                                  # 기본 포트
+    user="andong_data",                                                        # 사용자명
+    password="andong_data_123!",                                               # 비밀번호
+    database="data_mart"                                                       # 기존에 쓰던 DB 이름 그대로
 )
+
 
 # 커서 생성
 cursor = conn.cursor()
