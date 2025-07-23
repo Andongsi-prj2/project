@@ -12,7 +12,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 device = torch.device('cpu')
 model = models.resnet18(pretrained=False)
 model.fc = torch.nn.Linear(model.fc.in_features, 2)
-model.load_state_dict(torch.load('resnet18_ok_ng.pt', map_location=device))
+model = torch.load("resnet18_full.pt", map_location="cpu", weights_only=False)
 model.eval()
 
 # 클래스 매핑
