@@ -1,0 +1,9 @@
+# MySQL 데이터베이스 연결 설정
+DATABASE_URL=mysql+pymysql://username:password@localhost/manufacturing_db
+
+# FastAPI 설정
+HOST=0.0.0.0
+PORT=8000
+
+# 보안 설정
+SECRET_KEY=your-secret-key-here 

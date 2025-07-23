@@ -1,0 +1,14 @@
+# 기존 MySQL 데이터베이스 연결 설정
+DATABASE_URL=mysql+pymysql://username:password@3.38.2.58:3306
+
+# FastAPI 설정
+HOST=0.0.0.0
+PORT=8000
+
+# 보안 설정
+SECRET_KEY=your-secret-key-here
+
+# 기존 데이터베이스 정보
+# - DATA_MART: 16K (CROM, CROM_img)
+# - DATA_WAREHOUSE: 4.5M (CROM), 195M (CROM_img)  
+# - MES: 3.5M (CROM), 195M (CROM_img) 
