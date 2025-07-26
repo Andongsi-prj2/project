@@ -32,8 +32,8 @@ def generate_dashboard_reply(user_input):
 - LOT: https://your-site.com/dashboard#lot-search
 
 💡 HTML 응답 예시는 아래 형식을 따라야 해:
-📊 불량률은 이 링크에서 확인할 수 있어요:<br><br>
-👉 <a href="https://your-site.com/dashboard#defect-rate" target="_blank" style="color:#007bff; text-decoration:underline; font-weight:bold;">불량률 대시보드 바로가기</a>
+ 불량률은 이 링크에서 확인할 수 있어요:<br><br>
+ <a href="https://your-site.com/dashboard#defect-rate" target="_blank" style="color:#007bff; text-decoration:underline; font-weight:bold;">불량률 대시보드 바로가기</a>
 
 아무것도 관련 없는 질문이라면 정중하게 거절해도 돼.
 
@@ -51,4 +51,6 @@ def generate_dashboard_reply(user_input):
         return response.text
     except Exception as e:
         return f"❌ Gemini 응답 오류: {str(e)}"
+
+
 
