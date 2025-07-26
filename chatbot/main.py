@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify, render_template
-from config import FLASK_CONFIG
-from database import test_db_connection
 from gemini_api import generate_dashboard_reply
 
 app = Flask(__name__)
@@ -13,11 +11,6 @@ def handle_exception(e):
 def home():
     return render_template("chatbot_ui.html")
 
-@app.route("/test_db")
-def test_db_route():
-    result = test_db_connection()
-    return jsonify(result)
-
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
@@ -28,12 +21,5 @@ def chat():
         return jsonify({"reply": f"서버 오류 발생: {str(e)}"})
 
 if __name__ == "__main__":
-    print("🚀 챗봇 서버 시작...")
-    print("📊 DB 연결 테스트 중...")
-    db_result = test_db_connection()
-    if db_result["status"] == "success":
-        print(f"✅ DB 연결 성공! 테이블: {', '.join(db_result['tables'])}")
-    else:
-        print(f"❌ DB 연결 실패: {db_result['message']}")
+    app.run(debug=True, host="0.0.0.0", port=5000)
 
-    app.run(**FLASK_CONFIG)
