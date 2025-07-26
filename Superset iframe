@@ -1,0 +1,6 @@
+<SupersetDirectChart
+  title="총 불량률 분석"
+  description="총 불량률 파이 차트 (slice_id=161)"
+  chartId="161"
+  height={400}
+/>
