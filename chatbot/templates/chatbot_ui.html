@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Gemini 챗봇</title>
+  <style>
+    #chatbox {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 320px;
+      height: 450px;
+      min-width: 280px;
+      min-height: 300px;
+      max-width: 600px;
+      max-height: 600px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      z-index: 999;
+      overflow: hidden;
+      resize: none;
+      cursor: default;
+    }
+
+    #chatbox:hover {
+      cursor: default;
+    }
+
+    /* 리사이즈 핸들을 왼쪽 상단에만 표시 */
+    #chatbox::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background-color: transparent;
+      cursor: nw-resize;
+      z-index: 1000;
+      pointer-events: auto;
+    }
+
+    #chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    #chat-form {
+      display: flex;
+      border-top: 1px solid #eee;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      outline: none;
+    }
+
+    #chat-form button {
+      padding: 10px;
+      border: none;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    #chat-form button:hover {
+      background: #0056b3;
+    }
+
+    #chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    #chatbot-icon img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      background: transparent;
+      mix-blend-mode: multiply;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 챗봇 열기 아이콘 -->
+<button id="chatbot-icon">
+  <img src="/static/image_transparent.png" alt="파이프 도우미">
+</button>
+
+<!-- 챗봇 박스 -->
+<div id="chatbox" style="display: flex;">
+  <div id="chat-messages">
+    <p><strong><img src="/static/image.png" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;"> Chatbot:</strong> 안녕하세요! 무엇을 도와드릴까요?</p>
+  </div>
+  <form id="chat-form">
+    <input type="text" id="user-input" placeholder="질문을 입력하세요" autofocus autocomplete="off">
+    <button type="submit">전송</button>
+  </form>
+</div>
+
+<script>
+  // 챗봇 아이콘 클릭 시 토글 (선택사항)
+  document.getElementById("chatbot-icon").addEventListener("click", function() {
+    const chatbox = document.getElementById("chatbox");
+    chatbox.style.display = chatbox.style.display === "none" ? "flex" : "none";
+    if (chatbox.style.display === "flex") {
+      document.getElementById("user-input").focus();
+    }
+  });
+
+  // 리사이즈 기능 추가
+  let isResizing = false;
+  let startX, startY, startWidth, startHeight;
+
+  document.getElementById("chatbox").addEventListener("mousedown", function(e) {
+    const rect = e.target.getBoundingClientRect();
+    const isLeftTop = e.clientX - rect.left < 20 && e.clientY - rect.top < 20;
+    
+    if (isLeftTop) {
+      isResizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startWidth = parseInt(getComputedStyle(this).width);
+      startHeight = parseInt(getComputedStyle(this).height);
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener("mousemove", function(e) {
+    if (!isResizing) return;
+    
+    const chatbox = document.getElementById("chatbox");
+    const deltaX = startX - e.clientX;
+    const deltaY = startY - e.clientY;
+    
+    const newWidth = Math.max(280, Math.min(600, startWidth + deltaX));
+    const newHeight = Math.max(300, Math.min(600, startHeight + deltaY));
+    
+    chatbox.style.width = newWidth + "px";
+    chatbox.style.height = newHeight + "px";
+  });
+
+  document.addEventListener("mouseup", function() {
+    isResizing = false;
+  });
+
+  // 폼 제출 처리
+  document.getElementById("chat-form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    await sendMessage();
+  });
+
+  async function sendMessage() {
+    const input = document.getElementById("user-input");
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatMessages = document.getElementById("chat-messages");
+    const currentTime = new Date().toLocaleTimeString();
+
+    // 사용자가 입력한 메시지 출력
+    chatMessages.innerHTML += `
+      <div style="text-align: right; margin: 5px;">
+        <div style="display: inline-block; background-color: #e3f2fd; padding: 8px 12px; border-radius: 15px;">
+          <b>나:</b> ${message}
+        </div>
+        <div style="font-size: 10px; color: #888;">${currentTime}</div>
+      </div>
+    `;
+    input.value = "";
+
+    // Flask 서버로 POST 요청
+    try {
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user_input: message })
+      });
+
+      const data = await response.json();
+      const reply = data.reply;
+
+      // 챗봇 응답 출력 (HTML 렌더링 지원)
+      chatMessages.innerHTML += `
+        <div style="text-align: left; margin: 5px;">
+          <div style="display: inline-block; background-color: #f5f5f5; padding: 8px 12px; border-radius: 15px; max-width: 80%;">
+            <b><img src="/static/image_transparent.png" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;"> Chatbot:</b>${reply}
+          </div>
+          <div style="font-size: 10px; color: #888;">${currentTime}</div>
+        </div>
+      `;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (error) {
+      chatMessages.innerHTML += `
+        <div style="text-align: left; color: red;">
+          오류 발생: ${error.message}
+        </div>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html> 
